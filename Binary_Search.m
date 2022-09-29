@@ -1,7 +1,7 @@
 function v = Binary_Search(Y, lo, hi) % Y is a 1xlo matrix
 % returns a single bit value
 
-%% Not a binary search algo, just linear search from the end
+%% Not a binary search, just linear search from the end
     for i=1:lo
         if Y(lo-i+1)==1 % Y is a 1xlo matrix
             v = hi-i+1;

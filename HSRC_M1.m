@@ -1,4 +1,4 @@
-%% HSRC-M1 Figure 5a
+%% HSRC-M1 Figure a
 
 %% Variables 
 M = 4; % stops by MBS
