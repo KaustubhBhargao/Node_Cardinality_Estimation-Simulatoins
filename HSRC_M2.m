@@ -6,7 +6,7 @@ mbs_stops = [0.75, 0.75; 0.25, 0.75; 0.25, 0.25; 0.75, 0.25];
 T = 4; % types of nodes
 D = 300; % total nodes per type
 % q = 0.1:0.1:0.5; % probability that node is active
-% q = 0.3; % qb = probability with which a node is active. For simplicity,
+q = 0.3; % qb = probability with which a node is active. For simplicity,
          % qb = q for all b in {1, T}
 n_all = T * D; % total manufactured nodes
 t = floor(log2(n_all)); % maximum hash value (time slots), also the lenght
@@ -18,9 +18,10 @@ W = 30; % trials for Phase 1
 % each block divided into T-1 slots
 % l = 28321;  % number of blocks in step-1, corresponding to eps = 0.01
 % l = 6775;   % corresponding to eps = 0.02
-l = 3087;   % corresponding to eps = 0.03
+% l = 3087;   % corresponding to eps = 0.03
 % l = 1788;   % corresponding to eps = 0.04
 % l = 1116;   % corresponding to eps = 0.05
+l
 %% Even more variables, take values from literature
 % slot_width = ;
 % bit_rate = ;
@@ -35,7 +36,8 @@ y_pos = rand(T, D); % random y coordinates, in range (0,1)
 % active = zeros(T, D); % matrix of active nodes
 % active = Active_Nodes(T, D, q, active); % creating active nodes
 n_tild = zeros(M, T); % rough estimates, updates every phase
-n_hat = zeros(M, T);
+n_hat = zeros(M, T); % finer estimates
+n_hat_sum = zeros(1, T);
 Prop_Method = zeros(1,M); % time slots needed at each stop of the MBS
 q_max = 0.5;
 Prop_Method_q = zeros(1,5);
@@ -65,7 +67,7 @@ I = zeros(T,M); % used in phase 2, step 1, I(b,m)
 for iter=1:max_iter
 %     for q_ind=1:5
 %         q = q_ind/10;
-        q = 0.3;
+%         q = 0.3;
         active = zeros(T, D); % matrix of active nodes
         active = Active_Nodes(T, D, q, active); % creating active nodes
         %disp(sum(sum(active)));
