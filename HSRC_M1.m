@@ -1,5 +1,6 @@
 %% HSRC-M1
-
+clc
+clear
 %% Network Design Variables 
 M = 4; % stops by MBS
 mbs_stops = [0.75, 0.75; 0.25, 0.75; 0.25, 0.25; 0.75, 0.25];
@@ -7,11 +8,11 @@ mbs_stops = [0.75, 0.75; 0.25, 0.75; 0.25, 0.25; 0.75, 0.25];
 % Prop_Method_T = zeros(6);
 % Prop_Method_T_Trep = zeros(6);
 % for T_ind=1:6
-T = 1; % types of nodes
+T = 4; % types of nodes
 % T = T_mat(T_ind);
 D = 300; % total nodes per type
 % q = 0.1:0.1:0.5; % probability that node is active
-q = 0.9; % qb = probability with which a node is active. For simplicity,
+q = 0.6; % qb = probability with which a node is active. For simplicity,
          % qb = q for all b in {1, T}
 n_all = T * D; % total manufactured nodes
 t = floor(log2(n_all)); % maximum hash value (time slots), also the lenght
@@ -22,9 +23,9 @@ delta = 0.2; % desired error probability
 W = 30; % trials for Phase 1
 % each block divided into T-1 slots
 
-l = 28321;  % number of blocks in phase-2, corresponding to eps = 0.01
+% l = 28321;  % number of blocks in phase-2, corresponding to eps = 0.01
 % l = 6775;   % corresponding to eps = 0.02
-% l = 3087;   % corresponding to eps = 0.03
+ l = 3087;   % corresponding to eps = 0.03
 % l = 1788;   % corresponding to eps = 0.04
 % l = 1116;   % corresponding to eps = 0.05
 % l = 1; %test only
@@ -42,26 +43,43 @@ y_pos = rand(T, D); % random y coordinates, in range (0,1)
 % figure; scatter(x_pos_vec, y_pos_vec, color="r")
 % active = zeros(T, D); % matrix of active nodes
 % active = Active_Nodes(T, D, q, active); % creating active nodes
+
+%% Plotting Slots vs D
+%     Prop_Method_D = zeros(5);
+%     Prop_Method_D_Trep = zeros(5);
+%     D_mat = [1000, 2000, 3000, 4000, 5000];
+%     for d=1:5
+%     D=D_mat(d);
+%     n_all = T * D; % total manufactured nodes
+%     t = floor(log2(n_all)); % maximum hash value (time slots), also the lenght
+%                             % of every trial in phase-1 of SRC_M scheme
+%     x_pos = rand(T, D); % random x coordinates, in range (0,1)
+%     y_pos = rand(T, D); % random y coordinates, in range (0,1)
+%% plotting slots vs D ends here
+%% Plotting slots vs eps
+% eps_mat = [0.01, 0.02, 0.03, 0.04, 0.05];
+% l_mat = [28321, 6775, 3087, 1788, 1116];
+% Prop_Method_eps = zeros(1,5);
+% Prop_Method_eps_Trep = zeros(1,5);
+% for eps_ind=1:5
+% eps = eps_mat(eps_ind);
+% l = l_mat(eps_ind);
+%% Plotting slots vs eps ends above
+%% Plotting slots vs q
+% q_mat = [0.2, 0.3, 0.4, 0.5, 0.6];
+% for q_ind=1:5
+%     q = q_mat(q_ind);
+%     %q_max = 0.5;
+%     Prop_Method_q = zeros(1,5);
+%     Prop_Method_q_Trep = zeros(1,5);
+%% Plotting slots vs q ends above
 max_iter = 10;
+Prop_Method_iter = zeros(1,max_iter);
 for iter=1:max_iter
     n_tild = zeros(M, T); % rough estimates, updates every phase
     n_hat = zeros(M, T);
     n_hat_sum = zeros(1, T);
     Prop_Method = zeros(1,M); % time slots needed at each stop of the MBS
-%     q_max = 0.5;
-%     Prop_Method_q = zeros(1,5);
-%     Prop_Method_q_Trep = zeros(1,5);
-    % max_iter = 10;
-    Prop_Method_iter = zeros(1,max_iter);
-    %% Plotting slots vs eps
-    % eps_mat = [0.01, 0.02, 0.03, 0.04, 0.05];
-    % l_mat = [28321, 6775, 3087, 1788, 1116];
-    % Prop_Method_eps = zeros(1,5);
-    % Prop_Method_eps_Trep = zeros(1,5);
-    % for eps_ind=1:5
-    % eps = eps_mat(eps_ind);
-    % l = l_mat(eps_ind);
-    %% Plotting slots vs eps ends above
     temp = zeros(l, T, M); % block by type of node (as used by Dr Sachin)
     X_bit_pattern = zeros(l, T, M); % bit patterns, cumulative blocks, for calculating n_hat
     X_bit_pattern_1 = zeros(l, T, M); % cumulative bit patterns, cumulative blocks, for calculating n_hat
@@ -83,23 +101,7 @@ for iter=1:max_iter
     % v = zeros(1,W); % for every trial w
     % Y = zeros(M, W, t); % Cumulative Bit vector
     % S = zeros(M, W, t); % the bit vector of lenght t
-    %% Plotting Slots vs D
-    % Prop_Method_D = zeros(5);
-    % Prop_Method_D_Trep = zeros(5);
-    % D_mat = [1000, 2000, 3000, 4000, 5000];
-    % for d=1:5
-    % D=D_mat(d);
-    % n_all = T * D; % total manufactured nodes
-    % t = floor(log2(n_all)); % maximum hash value (time slots), also the lenght
-    %                         % of every trial in phase-1 of SRC_M scheme
-    % x_pos = rand(T, D); % random x coordinates, in range (0,1)
-    % y_pos = rand(T, D); % random y coordinates, in range (0,1)
     %% Main code here
-    % q_mat = [0.1, 0.2, 0.3, 0.4, 0.5];
-    % for q_ind=1:5
-    %     q = q_mat(q_ind);
-    % for iter=1:max_iter
-    %         q = 0.6;
     active = zeros(T, D); % matrix of active nodes
     active = Active_Nodes(T, D, q, active); % creating active nodes
     %disp(sum(sum(active)));
@@ -115,7 +117,7 @@ for iter=1:max_iter
                 if active(b, act_nd) == 0
                   % do nothing, node is inactive   
                 else %node is active
-                    if sqrt((mbs_stops(m,1)-x_pos(b,act_nd))^2 + (mbs_stops(m,2)-y_pos(b,act_nd))^2)<=pi/8
+                    if sqrt((mbs_stops(m,1)-x_pos(b,act_nd))^2 + (mbs_stops(m,2)-y_pos(b,act_nd))^2)<=pi/4
                         % try changing the range of MBS
                         % do nothing, node is active and in range
                     else 
@@ -193,7 +195,8 @@ for iter=1:max_iter
             %disp(sum(v));
             n_tild(m,b) = 0.794 * 2^(sum(v)/W);
         end % end SRC_M for node type b
-        Prop_Method(m) = T*W*t;
+        Prop_Method(m) = T*W*t; %slots used in phase-1 at stop m
+        %disp(Prop_Method(m));
     
         %% Phase 1 ends here, and Phase 2 of HSRC-M1 begins
         
@@ -237,7 +240,11 @@ for iter=1:max_iter
         K=0;
         R=0;
         for ind=1:l %for every block
-            if (((temp(ind,1,m)==1)&&(sum(temp(ind,2:T,m)>=1) == (T-1)))||((temp(ind,1,m)==0)&&(sum(temp(ind,2:T,m)>=2) == (T-1)))||((temp(ind,1,m)>=2)))            
+            %disp(sum(temp(ind,2:T,m)>=1)==(T-1));
+            if (((temp(ind,1,m)==1)&&(sum(temp(ind,2:T,m)>=1)==(T-1))) || ((temp(ind,1,m)==0)&&(sum(temp(ind,2:T,m)>=2)==(T-1))) || ((temp(ind,1,m)>=2)))            
+                % i.e., if (exactly one node of type 1 transmits and all other nodes also transmit) 
+                % OR (type 1 does not transmit and multiple nodes of other types transmit)
+                % OR (multiple nodes of type 1 transmit)
                 K=K+1;
             end
             if ((temp(ind,1,m)>=2))
@@ -326,7 +333,7 @@ for iter=1:max_iter
         %calculate n_hat for this m here::
         n_hat_sum = sum(n_hat);
         
-        Prop_Method(m) = Prop_Method(m) + (T-1)*l+1+K+1+(T-1)*R; 
+        Prop_Method(m) = Prop_Method(m) + (T-1)*l + 1 + K + 1 + (T-1)*R; 
    
     end % end loop for m
 %         fprintf('For q = %f, Slots with HSRC-M1 = %f\n', q, sum(Prop_Method));
@@ -336,11 +343,12 @@ for iter=1:max_iter
 %         % disp(M*T*(W*t + l));
 %     end % end loop for q
     Prop_Method_iter(iter) = sum(Prop_Method);
-    fprintf('iteration: %d\n', iter);
+%     fprintf('iteration: %d\n', iter);
+    fprintf('slots using HSRC-M1 for iter = %d are : %d\n', iter, Prop_Method_iter(iter));
 %     disp(iter);
 end % end iteration
 %%
-fprintf('avg slots using HSRC-M1 = %f\n', mean(Prop_Method_iter));
+fprintf('avg slots with HSRC-M1 = %d\n', mean(Prop_Method_iter));
 fprintf('slots using T-rep SRCM = %d\n', M*T*(W*t + l))
 % disp(mean(Prop_Method_iter));
 % disp(M*T*(W*t + l));
@@ -414,14 +422,14 @@ fprintf('slots using T-rep SRCM = %d\n', M*T*(W*t + l))
  %% Plotting slots vs q
 % Prop_Method_q(q_ind) = mean(Prop_Method_iter);
 % Prop_Method_q_Trep(q_ind) = M*T*(W*t + l);
-% end %end eps loop
+% end %end q loop
 % figure;
 % plot(q_mat, Prop_Method_q, '-', 'Marker', '*')
 % hold on
 % plot(q_mat, Prop_Method_q_Trep,'--', 'Marker', '*', 'Color','red')
 % set(gca,'FontSize',14,'FontName','Times New Roman')
 % % xlim([1000 5000])
-%  ylim([3e4 7e4])
+% % ylim([3e4 7e4])
 % title(sprintf('Number of slots required vs q'),'FontSize',16)
 % xlabel('q','FontSize',16)%Probability with which a node is active
 % ylabel('Number of slots required','FontSize',16)

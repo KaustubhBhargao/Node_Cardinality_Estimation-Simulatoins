@@ -2,12 +2,16 @@ function v = Binary_Search(Y, lo, hi) % Y is a 1xlo matrix
 % returns a single bit value
 
 %% Not a binary search, just linear search from the end
+if (lo==1)
+    v = lo;
+else
     for i=1:lo
         if Y(lo-i+1)==1 % Y is a 1xlo matrix
             v = hi-i+1;
             break;
         end
     end
+end
 
 %     [a, b, c] = size(Y); % a and b are 1, c is the useful value
 %     % end case of recursion when c = 1
